@@ -76,7 +76,7 @@ If you don't pass the `continue` argument, the script will simply show you the t
 
 ## Background
 
-This idea is inspired by a couple research papers that explore techniques for improving reasoning and creativity in LLMs:
+This idea is inspired by a few research papers that explore techniques for improving reasoning and creativity in LLMs:
 
 - RAP: [Reasoning with Language Model is Planning with World Model](https://arxiv.org/abs/2305.14992)
 - rStar: [Mutual Reasoning Makes Smaller LLMs Stronger Problem-solvers](https://huggingface.co/papers/2408.06195)
@@ -100,7 +100,7 @@ Also, I haven't done a 1-to-1 comparison within this architecture of the quality
 
 - There are a lot of print statements in the code because it's running in a terminal, and it's fun to see what's being generated in real time. But that can make the code hard to read. So delete them if you want to.
 - The LLM responses from idea evaluation are quite subjective, and only happen once per idea. So the quality of the ideas generated is only as good as the LLM's ability to evaluate them. Multiple evaluations on a single idea from different models might be a good thing to try.
-= There are so many other ways to iterate on this tool — prompt design (introducing few-shot prompting), action design, discriminator addition and design, and evaluation methods. Any number of these could improve creativity of the ideas that are generated.
+- There are so many other ways to iterate on this tool — prompt design (introducing few-shot prompting), action design, discriminator addition and design, and evaluation methods. Any number of these could improve creativity of the ideas that are generated.
 
 ## Credits
 
