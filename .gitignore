@@ -1,0 +1,9 @@
+.venv/
+venv/
+.env
+.DS_Store
+*.pyc
+__pycache__/
+outputs/*
+!**/.gitkeep
+.aidigestignore
