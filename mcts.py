@@ -14,6 +14,9 @@ from utils import save_tree_to_json
 
 
 class MCTS:
+    # Defaults to sqrt(2)
+    DEFAULT_C_PARAM = 1.414
+
     def __init__(
         self,
         root,
@@ -25,6 +28,7 @@ class MCTS:
         save_filename_prefix="brainstorm",
         use_groq=False,
         iterations=250,
+        c_param=DEFAULT_C_PARAM,
     ):
         """
         Initialize the Monte Carlo Tree Search (MCTS) object.
@@ -39,6 +43,7 @@ class MCTS:
             save_filename_prefix (str, optional): Prefix for the output file name. Defaults to "brainstorm". System will append a timestamp to the prefix.
             use_groq (bool, optional): Flag to indicate if using Groq API. Defaults to False.
             iterations (int, optional): Number of MCTS iterations to perform. Defaults to 250.
+            c_param (float, optional): Exploration parameter for the UCT formula in MCTS. Defaults to sqrt(2). Increase to encourage exploration (approach 2), decrease to encourage exploitation (approach 1).
         """
         self.root = root
         self.creative_directives = creative_directives
@@ -50,6 +55,7 @@ class MCTS:
         self.llm_evaluation_model = llm_evaluation_model
         self.save_filename_prefix = save_filename_prefix
         self.save_filename = None
+        self.c_param = c_param
 
     def run(self):
         """
@@ -184,7 +190,7 @@ class MCTS:
                 if random.random() < 0.2:
                     return random.choice(node.children)
                 else:
-                    node = node.best_child()
+                    node = node.best_child(c_param=self.c_param)
         return node
 
     # -----------------------------------------------------------------------------
@@ -315,7 +321,8 @@ class MCTS:
                     prompt,
                     system_prompt,
                     self.llm_generation_model,
-                    max_tokens=350,
+                    max_tokens=600,
+                    temperature=1,
                 )
             except Exception:
                 if attempt == max_retries - 1:  # If this is the last attempt
@@ -347,7 +354,8 @@ class MCTS:
                     prompt,
                     system_prompt,
                     self.llm_generation_model,
-                    max_tokens=450,
+                    max_tokens=600,
+                    temperature=1,
                 )
             except Exception:
                 if attempt == max_retries - 1:  # If this is the last attempt

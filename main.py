@@ -1,7 +1,7 @@
 # -----------------------------------------------------------------------------
 #
 # AI-assisted Brainstorming Tool
-# 
+#
 # Follow the numbered comment blocks to customize the tool for your needs.
 #
 # -----------------------------------------------------------------------------
@@ -218,6 +218,7 @@ if __name__ == "__main__":
             save_filename_prefix="brainstorm_output",
             use_groq=use_groq,
             iterations=100,
+            c_param=MCTS.DEFAULT_C_PARAM,
         )
         mcts.run()
 

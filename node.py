@@ -12,7 +12,6 @@ class Node:
 
     Attributes:
         QUALITY_THRESHOLD (float): The score threshold for considering a node as high-quality.
-        C_PARAM (float): Exploration parameter for the UCT formula in MCTS.
         MAX_DEPTH (int): Maximum depth allowed for the search tree.
         MAX_CHILDREN (int): Maximum number of children allowed for each node.
 
@@ -30,7 +29,6 @@ class Node:
     """
 
     QUALITY_THRESHOLD = 0.87
-    C_PARAM = 1.414
     MAX_DEPTH = 5
     MAX_CHILDREN = 5
 
@@ -85,7 +83,12 @@ class Node:
         """
         return len(self.children) >= self.MAX_CHILDREN
 
-    def best_child(self):
+    def best_child(self, c_param=1.414):
+        """
+        Select the best child node using the UCB1 algorithm.
+
+        c_param (float): Exploration parameter for the UCT formula in MCTS, defaults to sqrt(2)
+        """
         if not self.children:
             return None
 
@@ -119,13 +122,13 @@ class Node:
 
         2. **The formula**: For each child, it calculates a score using this formula:
             ```
-            (child.score / child.visits) + C_PARAM * sqrt((2 * log(self.visits)) / child.visits)
+            (child.score / child.visits) + c_param * sqrt((2 * log(self.visits)) / child.visits)
             ```
 
         3. **Components of the formula**:
             - `child.score / child.visits`: This is the average score of the child (exploitation)
-            - `C_PARAM * sqrt((2 * log(self.visits)) / child.visits)`: This is the exploration bonus
-            - `C_PARAM` (usually √2) controls the balance between exploration and exploitation
+            - `c_param * sqrt((2 * log(self.visits)) / child.visits)`: This is the exploration bonus
+            - `c_param` (usually √2) controls the balance between exploration and exploitation
 
         4. **Selection**: It calculates this score for all visited children and chooses the one with the highest score.
 
@@ -139,7 +142,7 @@ class Node:
         """
         choices_weights = [
             (child.score / child.visits)
-            + self.C_PARAM * ((2 * math.log(self.visits) / child.visits) ** 0.5)
+            + c_param * ((2 * math.log(self.visits) / child.visits) ** 0.5)
             for child in self.children
             if child.visits > 0
         ]
