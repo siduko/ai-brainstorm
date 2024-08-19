@@ -15,7 +15,7 @@ from openai import OpenAI
 from creative_directives import CREATIVE_DIRECTIVES
 from mcts import MCTS
 from node import Node
-from utils import print_tree
+from utils import print_tree, save_tree_to_html
 
 load_dotenv()
 
@@ -140,6 +140,7 @@ def print_best_ideas(best_ideas):
 if __name__ == "__main__":
     import sys
     from utils import load_tree_from_json
+    from datetime import datetime
 
     will_run_mcts = False
 
@@ -228,3 +229,9 @@ if __name__ == "__main__":
     num_best_ideas = 5
     best_ideas = get_best_ideas(root_node, num_best_ideas)
     print_best_ideas(best_ideas)
+
+    if will_run_mcts:
+        save_tree_to_html(root_node, mcts.save_filename_prefix + ".html")
+    else:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        save_tree_to_html(root_node, f"brainstorm_output_{timestamp}.html")

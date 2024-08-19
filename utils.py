@@ -1,6 +1,6 @@
 import json
 import os
-from datetime import datetime
+from pathlib import Path
 
 from node import Node
 
@@ -63,3 +63,26 @@ def load_tree_from_json(filename):
 
     root_node = dict_to_node(tree_dict)
     return root_node
+
+
+def save_tree_to_html(root_node, filename):
+    def node_to_dict(node):
+        return {
+            "content": node.content,
+            "relative_score": node.get_relative_score(),
+            "children": [node_to_dict(child) for child in node.children],
+        }
+
+    tree_data = node_to_dict(root_node)
+
+    template_path = Path(__file__).parent / "tree_template.html"
+    with open(template_path, "r", encoding="utf-8") as f:
+        template = f.read()
+
+    html_content = template.replace("{{tree_data}}", json.dumps(tree_data))
+
+    output_path = Path("outputs") / filename
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(html_content)
+
+    print(f"HTML tree saved to {output_path}")

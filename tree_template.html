@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Node Tree Visualization</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f0f0f0; line-height: 1.4; }
+        #tree { max-width: 1024px; margin: 0 auto; }
+        .node { margin-left: 20px; margin-bottom: 20px; background-color: white; padding: 10px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .content { cursor: pointer; padding: 20px; margin-bottom: 5px; }
+        .children { display: none; }
+        .expanded > .children { display: block; }
+        .score { color: green; font-weight: bold; }
+        #controls { margin-bottom: 20px; max-width: 1024px; padding: 10px; margin: 0 auto; display: flex; flex-direction: row; justify-content: center; align-items: center; }
+
+        #search, #score-filter { margin-right: 10px; padding: 5px; }
+        button { padding: 5px 10px;  border: 1px solid #ccc; border-radius: 4px; cursor: pointer; }
+        .highlight { border: 2px solid gold; }
+        .hidden { display: none !important; }
+
+        .toggle-container { display: inline-block; margin-right: 20px; font-size: 14px; }
+        .toggle-switch { position: relative; display: inline-block; width: 40px; height: 22px; top:-2px; margin-right: 5px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 22px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #2196F3; }
+        input:checked + .slider:before { transform: translateX(18px); }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <input type="text" id="search" placeholder="Search content">
+        <input type="number" id="score-filter" placeholder="Min score" step="0.01">
+        <div class="toggle-container">
+            <label class="toggle-switch">
+                <input type="checkbox" id="top5-toggle">
+                <span class="slider"></span>
+            </label>
+            Show Top 5 Only
+        </div>
+        <button onclick="expandAll()">Expand All</button>
+        <button onclick="collapseAll()">Collapse All</button>
+    </div>
+    <div id="tree"></div>
+
+    <script>
+        const treeData = {{tree_data}};
+
+        function renderTree(node, parent) {
+            const div = document.createElement('div');
+            div.className = 'node expanded';
+            const content = document.createElement('div');
+            content.className = 'content';
+            let nodeContent = node.content;
+            // Replace newlines with <br> tags
+            nodeContent = nodeContent.replace(/\n/g, '<br>');
+            content.innerHTML = `<span class="score">${node.relative_score.toFixed(2)}</span> - ${nodeContent}`;
+            content.onclick = (e) => {
+                e.stopPropagation();
+                div.classList.toggle('expanded');
+            };
+            div.appendChild(content);
+
+            if (node.children.length > 0) {
+                const children = document.createElement('div');
+                children.className = 'children';
+                node.children.forEach(child => renderTree(child, children));
+                div.appendChild(children);
+            }
+
+            parent.appendChild(div);
+        }
+
+        function expandAll() {
+            document.querySelectorAll('.node').forEach(node => node.classList.add('expanded'));
+        }
+
+        function collapseAll() {
+            document.querySelectorAll('.node').forEach(node => {
+                if (node !== document.querySelector('#tree > .node')) {
+                    node.classList.remove('expanded');
+                }
+            });
+        }
+
+        function filterTree() {
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            const minScore = parseFloat(document.getElementById('score-filter').value) || 0;
+            const showTop5Only = document.getElementById('top5-toggle').checked;
+
+            let visibleNodes = [];
+
+            document.querySelectorAll('.node').forEach(node => {
+                const content = node.querySelector('.content').textContent.toLowerCase();
+                const score = parseFloat(node.querySelector('.score').textContent);
+                const visible = (node === document.querySelector('#tree > .node')) || (content.includes(searchTerm) && score >= minScore);
+
+                if(score < minScore) {
+                    node.querySelector('.content').classList.add('hidden');
+                } else {
+                    node.querySelector('.content').classList.remove('hidden');
+                }
+                
+                if (visible) {
+                    visibleNodes.push({ node, score });
+                }
+                
+                node.classList.toggle('hidden', !visible);
+            });
+
+            if (showTop5Only && searchTerm === '' && minScore === 0) {
+                visibleNodes.sort((a, b) => b.score - a.score);
+                visibleNodes = visibleNodes.slice(0, 5);
+                document.querySelectorAll('.node').forEach(node => {
+                    node.classList.add('hidden');
+                });
+                visibleNodes.forEach(({ node }) => {
+                    node.classList.remove('hidden');
+                });
+            }
+
+            visibleNodes.forEach(({ node }) => {
+                let parent = node.parentElement;
+                while (parent && !parent.matches('#tree')) {
+                    parent.classList.remove('hidden');
+                    parent = parent.parentElement;
+                }
+            });
+        }
+
+        function highlightTopIdeas() {
+            const nodes = Array.from(document.querySelectorAll('.node'));
+            nodes.sort((a, b) => parseFloat(b.querySelector('.score').textContent) - parseFloat(a.querySelector('.score').textContent));
+            nodes.forEach(node => node.classList.remove('highlight'));
+            nodes.slice(0, 5).forEach(node => node.classList.add('highlight'));
+        }
+
+        renderTree(treeData, document.getElementById('tree'));
+        highlightTopIdeas();
+
+        document.getElementById('search').addEventListener('input', filterTree);
+        document.getElementById('score-filter').addEventListener('input', filterTree);
+        document.getElementById('top5-toggle').addEventListener('change', filterTree);
+    </script>
+</body>
+</html>
