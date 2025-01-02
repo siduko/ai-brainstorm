@@ -161,17 +161,19 @@ if __name__ == "__main__":
         # 3. Define the problem statement and constraints
         #
         # -----------------------------------------------------------------------------
-        problem_statement = "I want to create a web app that will use generative AI large language models to assist with brainstorming. What would the UX for an interface for this app be like?"
+        problem_statement = "I want to develop an AR/MR interactive story game called 'Echoes of Lumina' where the player forms a bond with a virtual character from another world. How can I design compelling gameplay, a technically feasible implementation, and engaging assets to deliver a unique and emotionally resonant experience for the player?"
 
         constraints = f"""
-            - Your idea must be a web app.
-            - Your idea must be achievable with today's technology.
-            - Your idea must be accomplishable with only a computer with a web browser or a tablet. No additional hardware.
-            - Current generative AI large language models are capable of natural language processing and generation and vision (for still images, but not precise charts or text).
-            - Do not use any haptic, olfactory, taste, or audio feedback as part of the idea.
-            - Your idea must be for a single user. It should NOT be a multi-user or collaborative app.
-            - Your idea should focus on UTILITY, not entertainment.
-            - Important: explain what a prototype MVP of your idea would be. The prototype should be completable by a single person in one week.
+            - The game must primarily utilize AR/MR technology, integrating virtual elements with the player's real-world environment.
+            - The game should be playable on common mobile devices (iOS and Android) supporting ARKit and ARCore frameworks.
+            - The game should focus on a single-player experience, not multiplayer or cooperative gameplay.
+            - The core gameplay should emphasize storytelling, exploration, puzzle-solving, and character interaction; combat should be minimal or optional.
+            - The game's narrative should progress across three distinct phases: 'Familiarization & Discovery,' 'Challenges & Secrets,' and 'Decisions & Consequences,' with multiple possible endings.
+            - The game's art style should be visually appealing, character-driven, and suitable for a broad audience, leaning towards a 2.5D or 3D cartoonish look.
+            - The game's audio should enhance the atmosphere and immersion, including ambient music, sound effects, and potentially limited voice acting.
+            - The primary focus is on the emotional connection between the player and Lumina, and the consequences of the player's choices.
+            - Technical implementation should prioritize smooth performance and low latency for AR/MR interaction.
+            - The prototype MVP of the game should be achievable by a small team in 4 weeks.
             """
         constraints = textwrap.dedent(constraints)
 
